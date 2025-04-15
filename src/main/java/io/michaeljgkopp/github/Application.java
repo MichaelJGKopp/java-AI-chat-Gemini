@@ -18,8 +18,10 @@ import java.util.Scanner;
 
 // This is a simple Java application that sends a request to the Gemini API
 public class Application {
+    public static boolean PRINT_FULL_RESPONSE = false;
+
     // Path to the markdown file where chat logs will be saved
-    public static final String Chat_Log_MD_PATH = "Response.md";
+    public static final String Chat_Log_MD_PATH = "Chat.md";
     // API KEY
     private static String apiKey = System.getenv("GEMINI_API_KEY");
     // API URL
@@ -87,8 +89,20 @@ public class Application {
         }
 
         // HTTP.OK CASE
-        String text = extractTextFromResponse(jsonResponse);
 
+        // Default: extract the text from the JSON response
+        // If PRINT_FULL_RESPONSE is true, print the entire JSON response
+        String text;
+        if (!PRINT_FULL_RESPONSE) {
+            text = extractTextFromResponse(jsonResponse);
+        } else {
+            text = jsonResponse;
+        }
+
+        // Print the text
+        System.out.println("\nRESPONSE: \n============\n" + text);
+
+        // Save the request and response to a markdown file
         appendChatToFile(prompt, text);
     }
 
@@ -132,9 +146,6 @@ public class Application {
     }
 
     private static void appendChatToFile(String prompt, String text) throws IOException {
-        // Print the extracted text
-        System.out.println("\nRESPONSE: \n============\n" + text);
-
         // Save the response to a file
         Path path = Path.of(Chat_Log_MD_PATH);
         Files.writeString(path,
