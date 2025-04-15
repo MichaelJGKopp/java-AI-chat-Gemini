@@ -96,6 +96,7 @@ public class Application {
         if (!PRINT_FULL_RESPONSE) {
             text = extractTextFromResponse(jsonResponse);
         } else {
+            // Pretty print the full JSON response
             text = jsonResponse;
         }
 
@@ -145,22 +146,24 @@ public class Application {
         return text;
     }
 
-private static void appendChatToFile(String prompt, String text) throws IOException {
-    // Save the response to a file
-    Path path = Path.of(Chat_Log_MD_PATH);
-    try (var writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
-        writer.write(String.format("""
-                REQUEST:
-                ---------------------------------------------------
-                %s
-
-                RESPONSE:
-                ---------------------------------------------------
-                %s
-                ===================================================
-
-                """, prompt, text));
-        writer.flush(); // Ensure the data is written to the file immediately
+    private static void appendChatToFile(String prompt, String text) throws IOException {
+        // Save the response to a file
+        Path path = Path.of(Chat_Log_MD_PATH);
+        try (var writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
+            writer.write(String.format("""
+                    REQUEST:
+                    ---------------------------------------------------
+                    %s
+                    
+                    RESPONSE:
+                    ---------------------------------------------------
+                    ```
+                    %s
+                    ```
+                    ===================================================
+                    
+                    """, prompt, text));
+            writer.flush(); // Ensure the data is written to the file immediately
+        }
     }
-}
 }
